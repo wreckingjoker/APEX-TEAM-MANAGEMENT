@@ -7,18 +7,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     Credentials({
       async authorize(credentials) {
-        const parsed = loginSchema.safeParse(credentials);
-        if (!parsed.success) return null;
+        try {
+          const parsed = loginSchema.safeParse(credentials);
+          if (!parsed.success) return null;
 
-        const user = await verifyPassword(parsed.data.email, parsed.data.password);
-        if (!user) return null;
+          const user = await verifyPassword(parsed.data.email, parsed.data.password);
+          if (!user) return null;
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.full_name,
-          role: user.role,
-        };
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.full_name,
+            role: user.role,
+          };
+        } catch (err) {
+          console.error("[auth] authorize error:", err);
+          return null;
+        }
       },
     }),
   ],
