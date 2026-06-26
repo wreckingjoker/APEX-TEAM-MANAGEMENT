@@ -2,8 +2,8 @@ import { getSheetsClient, SPREADSHEET_ID, ensureHeaders, deleteSheetRow } from "
 import { getAllUsers } from "./users";
 
 const SHEET = "Tasks";
-const HEADERS = ["id", "title", "description", "status", "priority", "assigned_to", "created_by", "deadline", "created_at", "updated_at"];
-// A=id B=title C=description D=status E=priority F=assigned_to G=created_by H=deadline I=created_at J=updated_at
+const HEADERS = ["id", "title", "description", "status", "priority", "assigned_to", "created_by", "deadline", "created_at", "updated_at", "note"];
+// A=id B=title C=description D=status E=priority F=assigned_to G=created_by H=deadline I=created_at J=updated_at K=note
 
 export interface SheetTask {
   id: string;
@@ -16,6 +16,7 @@ export interface SheetTask {
   deadline: string;
   created_at: string;
   updated_at: string;
+  note: string;
 }
 
 export interface TaskWithAssignee extends SheetTask {
@@ -35,6 +36,7 @@ function rowToTask(row: string[]): SheetTask | null {
     deadline: row[7] ?? "",
     created_at: row[8] ?? new Date().toISOString(),
     updated_at: row[9] ?? new Date().toISOString(),
+    note: row[10] ?? "",
   };
 }
 
@@ -42,7 +44,7 @@ async function getAllRawRows(): Promise<{ rows: string[][]; data: SheetTask[] }>
   const sheets = getSheetsClient();
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: SPREADSHEET_ID,
-    range: `${SHEET}!A:J`,
+    range: `${SHEET}!A:K`,
   });
   const rows = res.data.values ?? [];
   const data = rows.slice(1).map(rowToTask).filter((t): t is SheetTask => t !== null);
@@ -104,15 +106,16 @@ export async function createTask(data: {
     deadline: data.deadline ?? "",
     created_at: now,
     updated_at: now,
+    note: "",
   };
 
   await sheets.spreadsheets.values.append({
     spreadsheetId: SPREADSHEET_ID,
-    range: `${SHEET}!A:J`,
+    range: `${SHEET}!A:K`,
     valueInputOption: "RAW",
     requestBody: {
       values: [[id, task.title, task.description, task.status, task.priority,
-        task.assigned_to, task.created_by, task.deadline, now, now]],
+        task.assigned_to, task.created_by, task.deadline, now, now, ""]],
     },
   });
 
@@ -121,30 +124,32 @@ export async function createTask(data: {
 
 export async function updateTask(
   id: string,
-  updates: Partial<Pick<SheetTask, "title" | "description" | "status" | "priority" | "assigned_to" | "deadline">>
+  updates: Partial<Pick<SheetTask, "title" | "description" | "status" | "priority" | "assigned_to" | "deadline" | "note">>
 ): Promise<SheetTask | null> {
   const sheets = getSheetsClient();
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: SPREADSHEET_ID,
-    range: `${SHEET}!A:J`,
+    range: `${SHEET}!A:K`,
   });
   const rows = res.data.values ?? [];
   const rowIndex = rows.findIndex((row, i) => i > 0 && row[0] === id);
   if (rowIndex === -1) return null;
 
   const row = [...rows[rowIndex]];
+  while (row.length < 11) row.push("");
   if (updates.title !== undefined) row[1] = updates.title;
   if (updates.description !== undefined) row[2] = updates.description ?? "";
   if (updates.status !== undefined) row[3] = updates.status;
   if (updates.priority !== undefined) row[4] = updates.priority;
   if (updates.assigned_to !== undefined) row[5] = updates.assigned_to;
   if (updates.deadline !== undefined) row[7] = updates.deadline ?? "";
+  if (updates.note !== undefined) row[10] = updates.note ?? "";
   row[9] = new Date().toISOString();
 
   const sheetRow = rowIndex + 1;
   await sheets.spreadsheets.values.update({
     spreadsheetId: SPREADSHEET_ID,
-    range: `${SHEET}!A${sheetRow}:J${sheetRow}`,
+    range: `${SHEET}!A${sheetRow}:K${sheetRow}`,
     valueInputOption: "RAW",
     requestBody: { values: [row] },
   });
@@ -156,7 +161,7 @@ export async function deleteTask(id: string): Promise<boolean> {
   const sheets = getSheetsClient();
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: SPREADSHEET_ID,
-    range: `${SHEET}!A:J`,
+    range: `${SHEET}!A:K`,
   });
   const rows = res.data.values ?? [];
   const rowIndex = rows.findIndex((row, i) => i > 0 && row[0] === id);
@@ -169,7 +174,7 @@ export async function unassignUserTasks(userId: string): Promise<void> {
   const sheets = getSheetsClient();
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: SPREADSHEET_ID,
-    range: `${SHEET}!A:J`,
+    range: `${SHEET}!A:K`,
   });
   const rows = res.data.values ?? [];
   const updates: Promise<unknown>[] = [];
@@ -181,7 +186,7 @@ export async function unassignUserTasks(userId: string): Promise<void> {
       updates.push(
         sheets.spreadsheets.values.update({
           spreadsheetId: SPREADSHEET_ID,
-          range: `${SHEET}!A${sheetRow}:J${sheetRow}`,
+          range: `${SHEET}!A${sheetRow}:K${sheetRow}`,
           valueInputOption: "RAW",
           requestBody: { values: [row] },
         })

@@ -23,6 +23,7 @@ export interface Task {
   deadline: string | null;
   created_at: string;
   updated_at: string;
+  note?: string | null;
   assignee?: Pick<Profile, "id" | "full_name" | "avatar_url">;
   creator?: Pick<Profile, "id" | "full_name">;
 }

@@ -2,7 +2,7 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Calendar, GripVertical, User } from "lucide-react";
+import { Calendar, GripVertical, User, FileText } from "lucide-react";
 import type { Task } from "@/types";
 
 const priorityStyles: Record<string, string> = {
@@ -63,6 +63,14 @@ export function TaskCard({ task, isDragging }: TaskCardProps) {
       {/* Description */}
       {task.description && (
         <p className="text-xs text-slate-500 line-clamp-2">{task.description}</p>
+      )}
+
+      {/* Completion note indicator */}
+      {task.note && (
+        <div className="flex items-start gap-1.5 bg-amber-50 border border-amber-100 rounded-lg px-2.5 py-1.5">
+          <FileText className="w-3 h-3 text-amber-500 shrink-0 mt-0.5" />
+          <p className="text-[11px] text-amber-700 line-clamp-2 leading-relaxed">{task.note}</p>
+        </div>
       )}
 
       {/* Footer */}

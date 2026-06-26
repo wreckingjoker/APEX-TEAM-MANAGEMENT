@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { getTaskById, updateTask, deleteTask } from "@/lib/sheets/tasks";
 import { logActivity } from "@/lib/sheets/activity";
-import { updateTaskSchema, updateTaskStatusSchema } from "@/lib/validations";
+import { updateTaskSchema, updateMemberTaskSchema } from "@/lib/validations";
 import { rateLimit } from "@/lib/rate-limit";
 
 export async function PATCH(
@@ -43,9 +43,12 @@ export async function PATCH(
     };
     newStatus = parsed.data.status;
   } else {
-    const parsed = updateTaskStatusSchema.safeParse(body);
+    const parsed = updateMemberTaskSchema.safeParse(body);
     if (!parsed.success) return NextResponse.json({ error: "Invalid input" }, { status: 400 });
-    updatePayload = { status: parsed.data.status };
+    updatePayload = {
+      status: parsed.data.status,
+      note: parsed.data.note,
+    };
     newStatus = parsed.data.status;
   }
 

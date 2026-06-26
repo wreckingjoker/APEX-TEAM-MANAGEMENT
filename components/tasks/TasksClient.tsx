@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Search, Calendar, Trash2 } from "lucide-react";
+import { Plus, Search, Calendar, Trash2, FileText, PenLine } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import type { Task, Profile, TaskStatus, UserRole } from "@/types";
 
 const statusStyles: Record<string, string> = {
@@ -35,6 +36,8 @@ export function TasksClient({ initialTasks, members, role, userId }: TasksClient
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
   const [showModal, setShowModal] = useState(false);
+  const [noteDialog, setNoteDialog] = useState<{ taskId: string; note: string } | null>(null);
+  const [noteSaving, setNoteSaving] = useState(false);
 
   const isAdmin = role === "admin";
 
@@ -61,6 +64,23 @@ export function TasksClient({ initialTasks, members, role, userId }: TasksClient
     if (!confirm("Delete this task? This cannot be undone.")) return;
     setTasks((prev) => prev.filter((t) => t.id !== taskId));
     await fetch(`/api/tasks/${taskId}`, { method: "DELETE" });
+  }
+
+  async function handleSaveNote() {
+    if (!noteDialog) return;
+    setNoteSaving(true);
+    const res = await fetch(`/api/tasks/${noteDialog.taskId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ note: noteDialog.note }),
+    });
+    setNoteSaving(false);
+    if (res.ok) {
+      setTasks((prev) =>
+        prev.map((t) => (t.id === noteDialog.taskId ? { ...t, note: noteDialog.note } : t))
+      );
+      setNoteDialog(null);
+    }
   }
 
   function reloadTasks() {
@@ -182,6 +202,23 @@ export function TasksClient({ initialTasks, members, role, userId }: TasksClient
                     {task.status}
                   </span>
                 )}
+
+                {/* Note section */}
+                {task.status === "done" && canChange && (
+                  <button
+                    onClick={() => setNoteDialog({ taskId: task.id, note: task.note ?? "" })}
+                    className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-[#4F7FFF] transition-colors"
+                  >
+                    <PenLine className="w-3.5 h-3.5" />
+                    {task.note ? "Edit completion note" : "Add completion note"}
+                  </button>
+                )}
+                {task.note && (
+                  <div className="flex items-start gap-2 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
+                    <FileText className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                    <p className="text-xs text-amber-800 leading-relaxed">{task.note}</p>
+                  </div>
+                )}
               </div>
             );
           })
@@ -217,6 +254,21 @@ export function TasksClient({ initialTasks, members, role, userId }: TasksClient
                         <p className="font-medium text-[#1A1A3E] text-sm">{task.title}</p>
                         {task.description && (
                           <p className="text-slate-400 text-xs line-clamp-1 mt-0.5">{task.description}</p>
+                        )}
+                        {task.note && (
+                          <div className="flex items-center gap-1 mt-1">
+                            <FileText className="w-3 h-3 text-amber-500 shrink-0" />
+                            <p className="text-xs text-amber-700 line-clamp-1">{task.note}</p>
+                          </div>
+                        )}
+                        {task.status === "done" && canUpdateStatus && (
+                          <button
+                            onClick={() => setNoteDialog({ taskId: task.id, note: task.note ?? "" })}
+                            className="flex items-center gap-1 mt-1 text-[10px] text-slate-400 hover:text-[#4F7FFF] transition-colors"
+                          >
+                            <PenLine className="w-3 h-3" />
+                            {task.note ? "Edit note" : "Add note"}
+                          </button>
                         )}
                       </div>
                     </TableCell>
@@ -281,6 +333,42 @@ export function TasksClient({ initialTasks, members, role, userId }: TasksClient
       {isAdmin && (
         <TaskModal open={showModal} onClose={() => setShowModal(false)} members={members} currentUserId={userId} onTaskCreated={reloadTasks} />
       )}
+
+      {/* Note Dialog */}
+      <Dialog open={!!noteDialog} onOpenChange={(v) => { if (!v) setNoteDialog(null); }}>
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-[#1A1A3E] flex items-center gap-2">
+              <FileText className="w-4 h-4 text-amber-500" />
+              Completion Note
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col gap-4 mt-2">
+            <p className="text-xs text-slate-500">
+              Summarise what was done, any blockers encountered, or handover details.
+            </p>
+            <textarea
+              value={noteDialog?.note ?? ""}
+              onChange={(e) => setNoteDialog((prev) => prev ? { ...prev, note: e.target.value } : null)}
+              placeholder="e.g. Completed the homepage redesign. Final files uploaded to Google Drive..."
+              maxLength={2000}
+              rows={5}
+              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+            />
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-slate-400">{(noteDialog?.note ?? "").length}/2000</span>
+              <div className="flex gap-3">
+                <Button type="button" variant="outline" onClick={() => setNoteDialog(null)} disabled={noteSaving}>
+                  Cancel
+                </Button>
+                <Button onClick={handleSaveNote} disabled={noteSaving} className="apex-gradient text-white border-0 hover:opacity-90">
+                  {noteSaving ? "Saving…" : "Save Note"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

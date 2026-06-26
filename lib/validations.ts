@@ -37,10 +37,13 @@ export const updateTaskSchema = z.object({
   priority: z.enum(["low", "medium", "high", "urgent"]).optional(),
   assigned_to: z.string().uuid().optional(),
   deadline: z.string().datetime({ offset: true }).nullable().optional(),
+  note: z.string().max(2000).trim().optional().or(z.literal("")),
 });
 
-export const updateTaskStatusSchema = z.object({
-  status: z.enum(["pending", "in-progress", "done"]),
+// Members can update their task's status and add a completion note
+export const updateMemberTaskSchema = z.object({
+  status: z.enum(["pending", "in-progress", "done"]).optional(),
+  note: z.string().max(2000).trim().optional().or(z.literal("")),
 });
 
 export const updateProfileSchema = z.object({
