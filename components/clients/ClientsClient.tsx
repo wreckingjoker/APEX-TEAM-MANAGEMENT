@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import type { SheetClient, ClientType, ClientStatus } from "@/lib/sheets/clients";
+import { avatarColor } from "@/lib/avatar-color";
 import type { UserRole } from "@/types";
 
 const TYPE_LABELS: Record<ClientType, string> = {
@@ -191,7 +192,10 @@ export function ClientsClient({ initialClients, role }: ClientsClientProps) {
               {/* Top row */}
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-xl apex-gradient flex items-center justify-center text-white font-bold text-base shrink-0">
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-base shrink-0"
+                    style={{ backgroundColor: avatarColor(client.id) }}
+                  >
                     {client.name.charAt(0).toUpperCase()}
                   </div>
                   <div className="min-w-0">

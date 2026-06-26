@@ -3,6 +3,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Calendar, GripVertical, User, FileText } from "lucide-react";
+import { avatarColor } from "@/lib/avatar-color";
 import type { Task } from "@/types";
 
 const priorityStyles: Record<string, string> = {
@@ -78,7 +79,10 @@ export function TaskCard({ task, isDragging }: TaskCardProps) {
         {/* Assignee */}
         {task.assignee ? (
           <div className="flex items-center gap-1.5 text-xs text-slate-500">
-            <div className="w-5 h-5 rounded-full apex-gradient flex items-center justify-center text-white text-[10px] font-bold">
+            <div
+              className="w-5 h-5 rounded-full flex items-center justify-center text-white text-[10px] font-bold"
+              style={{ backgroundColor: avatarColor(task.assignee.id) }}
+            >
               {task.assignee.full_name.charAt(0).toUpperCase()}
             </div>
             <span className="truncate max-w-[80px]">{task.assignee.full_name}</span>

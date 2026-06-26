@@ -3,6 +3,7 @@ import { getTasksWithAssignees } from "@/lib/sheets/tasks";
 import { getRecentActivity } from "@/lib/sheets/activity";
 import { CheckCircle2, Clock, Loader2, ListTodo, AlertTriangle } from "lucide-react";
 import { LocalTime } from "@/components/ui/LocalTime";
+import { avatarColor } from "@/lib/avatar-color";
 import type { Task, ActivityLog } from "@/types";
 
 function StatCard({ label, value, icon, color }: { label: string; value: number; icon: React.ReactNode; color: string }) {
@@ -108,7 +109,10 @@ export default async function DashboardPage() {
             <ul className="flex flex-col gap-3">
               {(activity as unknown as ActivityLog[]).map((log) => (
                 <li key={log.id} className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-full apex-gradient flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5">
+                  <div
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 mt-0.5"
+                    style={{ backgroundColor: avatarColor(log.user?.id ?? log.user?.full_name ?? "?") }}
+                  >
                     {log.user?.full_name?.charAt(0).toUpperCase() ?? "?"}
                   </div>
                   <div className="min-w-0">

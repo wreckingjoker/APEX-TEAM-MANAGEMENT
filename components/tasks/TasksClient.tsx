@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Search, Calendar, Trash2, FileText, PenLine } from "lucide-react";
+import { avatarColor } from "@/lib/avatar-color";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import type { Task, Profile, TaskStatus, UserRole } from "@/types";
 
@@ -172,7 +173,10 @@ export function TasksClient({ initialTasks, members, role, userId }: TasksClient
                 <div className="flex items-center justify-between gap-2 text-xs text-slate-500">
                   {task.assignee ? (
                     <div className="flex items-center gap-1.5">
-                      <div className="w-5 h-5 rounded-full apex-gradient flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+                      <div
+                        className="w-5 h-5 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0"
+                        style={{ backgroundColor: avatarColor(task.assignee.id) }}
+                      >
                         {task.assignee.full_name.charAt(0).toUpperCase()}
                       </div>
                       <span className="truncate max-w-[140px]">{task.assignee.full_name}</span>
@@ -275,7 +279,10 @@ export function TasksClient({ initialTasks, members, role, userId }: TasksClient
                     <TableCell>
                       {task.assignee ? (
                         <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full apex-gradient flex items-center justify-center text-white text-[10px] font-bold">
+                          <div
+                            className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold"
+                            style={{ backgroundColor: avatarColor(task.assignee.id) }}
+                          >
                             {task.assignee.full_name.charAt(0).toUpperCase()}
                           </div>
                           <span className="text-sm text-slate-700">{task.assignee.full_name}</span>

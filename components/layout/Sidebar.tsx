@@ -14,6 +14,7 @@ import {
   Briefcase,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
+import { avatarColor } from "@/lib/avatar-color";
 import type { UserRole } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -96,7 +97,10 @@ export function Sidebar({ role, fullName }: SidebarProps) {
       {/* User + Logout */}
       <div className="px-3 py-4 border-t border-white/10">
         <div className="flex items-center gap-3 px-3 py-2 mb-2">
-          <div className="w-8 h-8 rounded-full apex-gradient flex items-center justify-center text-white text-xs font-bold shrink-0">
+          <div
+            className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
+            style={{ backgroundColor: avatarColor(fullName) }}
+          >
             {fullName.charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0">

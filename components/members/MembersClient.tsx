@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Plus, UserMinus, AlertCircle, Shield, User } from "lucide-react";
+import { avatarColor } from "@/lib/avatar-color";
 import type { Profile } from "@/types";
 
 interface MembersClientProps {
@@ -128,7 +129,10 @@ export function MembersClient({
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl apex-gradient flex items-center justify-center text-white font-bold text-lg shrink-0">
+                <div
+                  className="w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold text-lg shrink-0"
+                  style={{ backgroundColor: avatarColor(member.id) }}
+                >
                   {member.full_name.charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0">
