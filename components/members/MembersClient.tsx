@@ -158,20 +158,22 @@ export function MembersClient({
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-50">
-              <div className="text-center">
-                <p className="text-lg font-bold text-[#1A1A3E]">
-                  {getTaskCount(member.id)}
-                </p>
-                <p className="text-xs text-slate-400">Total tasks</p>
+            {member.role === "member" && (
+              <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-50">
+                <div className="text-center">
+                  <p className="text-lg font-bold text-[#1A1A3E]">
+                    {getTaskCount(member.id)}
+                  </p>
+                  <p className="text-xs text-slate-400">Total tasks</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-lg font-bold text-[#4F7FFF]">
+                    {getActiveCount(member.id)}
+                  </p>
+                  <p className="text-xs text-slate-400">Active</p>
+                </div>
               </div>
-              <div className="text-center">
-                <p className="text-lg font-bold text-[#4F7FFF]">
-                  {getActiveCount(member.id)}
-                </p>
-                <p className="text-xs text-slate-400">Active</p>
-              </div>
-            </div>
+            )}
 
             <p className="text-xs text-slate-400">
               Joined {new Date(member.created_at).toLocaleDateString("en-US")}

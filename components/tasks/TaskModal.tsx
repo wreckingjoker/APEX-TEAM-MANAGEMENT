@@ -124,11 +124,14 @@ export function TaskModal({ open, onClose, members, currentUserId, onTaskCreated
             <Select value={assignedTo} onValueChange={(v) => v && setAssignedTo(v)}>
               <SelectTrigger><SelectValue placeholder="Select team member" /></SelectTrigger>
               <SelectContent>
-                {members.map((m) => (
+                {members.filter((m) => m.role === "member").map((m) => (
                   <SelectItem key={m.id} value={m.id}>
-                    {m.full_name} {m.role === "admin" ? "(admin)" : ""}
+                    {m.full_name}
                   </SelectItem>
                 ))}
+                {members.filter((m) => m.role === "member").length === 0 && (
+                  <div className="px-3 py-2 text-xs text-slate-400">No members added yet</div>
+                )}
               </SelectContent>
             </Select>
           </div>
