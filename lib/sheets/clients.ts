@@ -51,6 +51,7 @@ function rowToClient(row: string[]): SheetClient | null {
 }
 
 export async function getAllClients(): Promise<SheetClient[]> {
+  await ensureHeaders(SHEET, HEADERS);
   const sheets = getSheetsClient();
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: SPREADSHEET_ID,
