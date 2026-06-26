@@ -88,7 +88,7 @@ export default async function DashboardPage() {
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-[#1A1A3E] truncate">{task.title}</p>
                     {task.deadline && (
-                      <p className="text-xs text-red-500">Due {new Date(task.deadline).toLocaleDateString("en-US")}</p>
+                      <p className="text-xs text-red-500 flex items-center gap-1">Due <LocalTime iso={task.deadline} /></p>
                     )}
                   </div>
                   <span className={`px-2 py-0.5 rounded-full text-xs font-medium shrink-0 ${priorityColors[task.priority]}`}>
