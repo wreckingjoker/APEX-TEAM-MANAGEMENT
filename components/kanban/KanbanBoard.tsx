@@ -3,7 +3,7 @@
 import { useState } from "react";
 import {
   DndContext, DragEndEvent, DragStartEvent, DragOverlay,
-  PointerSensor, useSensor, useSensors, closestCorners,
+  PointerSensor, TouchSensor, useSensor, useSensors, closestCorners,
 } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useDroppable } from "@dnd-kit/core";
@@ -48,7 +48,8 @@ export function KanbanBoard({ initialTasks, role, userId }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } })
   );
 
   const getTasksByStatus = (status: TaskStatus) => tasks.filter((t) => t.status === status);

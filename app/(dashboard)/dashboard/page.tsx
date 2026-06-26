@@ -51,9 +51,9 @@ export default async function DashboardPage() {
   );
 
   return (
-    <div className="flex flex-col gap-6 p-6">
+    <div className="flex flex-col gap-4 md:gap-6 p-4 md:p-6">
       <div>
-        <h1 className="text-2xl font-bold text-[#1A1A3E]">
+        <h1 className="text-xl md:text-2xl font-bold text-[#1A1A3E]">
           Welcome back, {session?.user.name?.split(" ")[0]}
         </h1>
         <p className="text-slate-500 text-sm mt-1">

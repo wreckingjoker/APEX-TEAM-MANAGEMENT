@@ -77,26 +77,30 @@ export function TasksClient({ initialTasks, members, role, userId }: TasksClient
   });
 
   return (
-    <div className="flex flex-col gap-6 p-6">
+    <div className="flex flex-col gap-4 md:gap-6 p-4 md:p-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A1A3E]">Tasks</h1>
+          <h1 className="text-xl md:text-2xl font-bold text-[#1A1A3E]">Tasks</h1>
           <p className="text-slate-500 text-sm mt-1">{filtered.length} of {tasks.length} tasks</p>
         </div>
         {isAdmin && (
           <Button onClick={() => setShowModal(true)} className="apex-gradient text-white border-0 hover:opacity-90 gap-2">
-            <Plus className="w-4 h-4" />New Task
+            <Plus className="w-4 h-4" />
+            <span className="hidden sm:inline">New Task</span>
+            <span className="sm:hidden">New</span>
           </Button>
         )}
       </div>
 
-      <div className="flex flex-wrap gap-3">
-        <div className="relative flex-1 min-w-[200px]">
+      {/* Filters */}
+      <div className="flex flex-wrap gap-2 md:gap-3">
+        <div className="relative flex-1 min-w-[160px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <Input placeholder="Search tasks…" value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
         </div>
         <Select value={statusFilter} onValueChange={(v) => v && setStatusFilter(v)}>
-          <SelectTrigger className="w-40"><SelectValue placeholder="All statuses" /></SelectTrigger>
+          <SelectTrigger className="w-36 md:w-40"><SelectValue placeholder="All statuses" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All statuses</SelectItem>
             <SelectItem value="pending">Pending</SelectItem>
@@ -105,7 +109,7 @@ export function TasksClient({ initialTasks, members, role, userId }: TasksClient
           </SelectContent>
         </Select>
         <Select value={priorityFilter} onValueChange={(v) => v && setPriorityFilter(v)}>
-          <SelectTrigger className="w-40"><SelectValue placeholder="All priorities" /></SelectTrigger>
+          <SelectTrigger className="w-36 md:w-40"><SelectValue placeholder="All priorities" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All priorities</SelectItem>
             <SelectItem value="low">Low</SelectItem>
@@ -116,7 +120,76 @@ export function TasksClient({ initialTasks, members, role, userId }: TasksClient
         </Select>
       </div>
 
-      <div className="apex-card overflow-hidden">
+      {/* Mobile: card layout */}
+      <div className="flex flex-col gap-3 md:hidden">
+        {filtered.length === 0 ? (
+          <div className="apex-card p-10 text-center text-slate-400 text-sm">No tasks found.</div>
+        ) : (
+          filtered.map((task) => {
+            const overdue = task.deadline && new Date(task.deadline) < new Date() && task.status !== "done";
+            const canChange = isAdmin || task.assigned_to === userId;
+            return (
+              <div key={task.id} className="apex-card p-4 flex flex-col gap-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-[#1A1A3E] text-sm leading-snug">{task.title}</p>
+                    {task.description && (
+                      <p className="text-xs text-slate-400 mt-0.5 line-clamp-2">{task.description}</p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${priorityStyles[task.priority]}`}>
+                      {task.priority}
+                    </span>
+                    {isAdmin && (
+                      <button onClick={() => handleDelete(task.id)} aria-label="Delete task" className="text-slate-300 hover:text-red-500 transition-colors">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between gap-2 text-xs text-slate-500">
+                  {task.assignee ? (
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-5 h-5 rounded-full apex-gradient flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+                        {task.assignee.full_name.charAt(0).toUpperCase()}
+                      </div>
+                      <span className="truncate max-w-[140px]">{task.assignee.full_name}</span>
+                    </div>
+                  ) : (
+                    <span className="text-slate-400">Unassigned</span>
+                  )}
+                  {task.deadline && (
+                    <span className={`flex items-center gap-1 ${overdue ? "text-red-500" : ""}`}>
+                      <Calendar className="w-3 h-3" />
+                      {new Date(task.deadline).toLocaleDateString("en-US")}
+                    </span>
+                  )}
+                </div>
+
+                {canChange ? (
+                  <Select value={task.status} onValueChange={(v) => v && handleStatusChange(task.id, v as TaskStatus)}>
+                    <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="in-progress">In Progress</SelectItem>
+                      <SelectItem value="done">Done</SelectItem>
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <span className={`self-start px-2 py-0.5 rounded-full text-xs font-medium ${statusStyles[task.status]}`}>
+                    {task.status}
+                  </span>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop: table layout */}
+      <div className="hidden md:block apex-card overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow className="bg-slate-50">

@@ -134,11 +134,11 @@ export function ClientsClient({ initialClients, role }: ClientsClientProps) {
   const availableStatuses = form.type === "onboarded" ? ONBOARDED_STATUSES : LEAD_STATUSES;
 
   return (
-    <div className="flex flex-col gap-6 p-6">
+    <div className="flex flex-col gap-4 md:gap-6 p-4 md:p-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A1A3E]">Clients</h1>
+          <h1 className="text-xl md:text-2xl font-bold text-[#1A1A3E]">Clients</h1>
           <p className="text-slate-500 text-sm mt-1">{clients.length} total · {activeCount} active</p>
         </div>
         {isAdmin && (
@@ -149,7 +149,7 @@ export function ClientsClient({ initialClients, role }: ClientsClientProps) {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-3 md:gap-4">
         <div className="apex-card p-4">
           <p className="text-2xl font-bold text-[#00C8FF]">{onboardedCount}</p>
           <p className="text-sm text-slate-500 mt-1">Onboarded Clients</p>
@@ -277,7 +277,7 @@ export function ClientsClient({ initialClients, role }: ClientsClientProps) {
 
       {/* Add / Edit Modal */}
       <Dialog open={showModal} onOpenChange={(v) => { if (!v) closeModal(); }}>
-        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-lg max-h-[90dvh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-[#1A1A3E]">
               {editClient ? "Edit Client" : "Add Client"}
