@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { getTasksWithAssignees } from "@/lib/sheets/tasks";
 import { getRecentActivity } from "@/lib/sheets/activity";
 import { CheckCircle2, Clock, Loader2, ListTodo, AlertTriangle } from "lucide-react";
+import { LocalTime } from "@/components/ui/LocalTime";
 import type { Task, ActivityLog } from "@/types";
 
 function StatCard({ label, value, icon, color }: { label: string; value: number; icon: React.ReactNode; color: string }) {
@@ -116,7 +117,7 @@ export default async function DashboardPage() {
                       {log.action}{" "}
                       {log.task && <span className="font-medium">{log.task.title}</span>}
                     </p>
-                    <p className="text-xs text-slate-400">{new Date(log.created_at).toLocaleString()}</p>
+                    <LocalTime iso={log.created_at} className="text-xs text-slate-400" />
                   </div>
                 </li>
               ))}
