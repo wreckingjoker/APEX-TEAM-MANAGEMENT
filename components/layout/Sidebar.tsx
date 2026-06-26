@@ -11,6 +11,7 @@ import {
   UserCircle,
   Settings,
   LogOut,
+  Briefcase,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import type { UserRole } from "@/types";
@@ -27,6 +28,7 @@ const navItems: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: <LayoutDashboard className="w-4 h-4" /> },
   { href: "/kanban", label: "Kanban Board", icon: <Columns3 className="w-4 h-4" /> },
   { href: "/tasks", label: "Tasks", icon: <ListTodo className="w-4 h-4" /> },
+  { href: "/clients", label: "Clients", icon: <Briefcase className="w-4 h-4" /> },
   { href: "/members", label: "Members", icon: <Users className="w-4 h-4" />, adminOnly: true },
   { href: "/profile", label: "Profile", icon: <UserCircle className="w-4 h-4" /> },
   { href: "/settings", label: "Settings", icon: <Settings className="w-4 h-4" />, adminOnly: true },

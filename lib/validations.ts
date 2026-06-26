@@ -48,6 +48,22 @@ export const updateProfileSchema = z.object({
   avatar_url: z.string().url().max(500).nullable().optional(),
 });
 
+export const createClientSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100).trim(),
+  email: z.string().email("Invalid email").max(255).optional().or(z.literal("")),
+  phone: z.string().max(30).optional().or(z.literal("")),
+  company: z.string().max(100).trim().optional().or(z.literal("")),
+  type: z.enum(["onboarded", "lead"]),
+  status: z.enum(["active", "paused", "completed", "new", "contacted", "proposal", "negotiating", "lost"]),
+  project: z.string().max(200).trim().optional().or(z.literal("")),
+  budget: z.string().max(50).optional().or(z.literal("")),
+  source: z.string().max(100).trim().optional().or(z.literal("")),
+  notes: z.string().max(2000).optional().or(z.literal("")),
+  assigned_to: z.string().optional().or(z.literal("")),
+});
+
+export const updateClientSchema = createClientSchema.partial();
+
 export const changePasswordSchema = z
   .object({
     current_password: z.string().min(1, "Current password is required"),
