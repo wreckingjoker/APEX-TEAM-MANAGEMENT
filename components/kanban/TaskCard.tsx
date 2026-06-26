@@ -96,9 +96,12 @@ export function TaskCard({ task, isDragging }: TaskCardProps) {
             className={`flex items-center gap-1 text-xs ${isOverdue ? "text-red-500" : "text-slate-400"}`}
           >
             <Calendar className="w-3 h-3" />
-            {new Date(task.deadline).toLocaleDateString("en-GB", {
+            {new Date(task.deadline).toLocaleString("en-IN", {
               day: "numeric",
               month: "short",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
             })}
           </div>
         )}

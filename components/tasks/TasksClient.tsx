@@ -183,7 +183,7 @@ export function TasksClient({ initialTasks, members, role, userId }: TasksClient
                   {task.deadline && (
                     <span className={`flex items-center gap-1 ${overdue ? "text-red-500" : ""}`}>
                       <Calendar className="w-3 h-3" />
-                      {new Date(task.deadline).toLocaleDateString("en-US")}
+                      {new Date(task.deadline).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true })}
                     </span>
                   )}
                 </div>
@@ -309,7 +309,7 @@ export function TasksClient({ initialTasks, members, role, userId }: TasksClient
                       {task.deadline ? (
                         <span className={`flex items-center gap-1 text-xs ${isOverdue ? "text-red-500" : "text-slate-500"}`}>
                           <Calendar className="w-3 h-3" />
-                          {new Date(task.deadline).toLocaleDateString("en-US")}
+                          {new Date(task.deadline).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true })}
                         </span>
                       ) : (
                         <span className="text-slate-400 text-xs">—</span>
