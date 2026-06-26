@@ -204,13 +204,13 @@ export function TasksClient({ initialTasks, members, role, userId }: TasksClient
                 )}
 
                 {/* Note section */}
-                {task.status === "done" && canChange && (
+                {canChange && (
                   <button
                     onClick={() => setNoteDialog({ taskId: task.id, note: task.note ?? "" })}
                     className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-[#4F7FFF] transition-colors"
                   >
                     <PenLine className="w-3.5 h-3.5" />
-                    {task.note ? "Edit completion note" : "Add completion note"}
+                    {task.note ? "Edit note" : "Add note"}
                   </button>
                 )}
                 {task.note && (
@@ -261,7 +261,7 @@ export function TasksClient({ initialTasks, members, role, userId }: TasksClient
                             <p className="text-xs text-amber-700 line-clamp-1">{task.note}</p>
                           </div>
                         )}
-                        {task.status === "done" && canUpdateStatus && (
+                        {canUpdateStatus && (
                           <button
                             onClick={() => setNoteDialog({ taskId: task.id, note: task.note ?? "" })}
                             className="flex items-center gap-1 mt-1 text-[10px] text-slate-400 hover:text-[#4F7FFF] transition-colors"
